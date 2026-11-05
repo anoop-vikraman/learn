@@ -144,6 +144,82 @@ const AdminPage = lazy(() => import('./AdminPage'));  // becomes a separate file
 - How do you reduce bundle size? (Code splitting, lazy routes, tree shaking, analyze the bundle with `rollup-plugin-visualizer` or `webpack-bundle-analyzer`, replace heavy libraries.)
 - What is a source map?
 
+**Model answers (say each in about 30–60 seconds):**
+
+**Q: Why is Vite faster than Webpack in development?**
+
+Webpack **bundles the entire app before the dev server can start**. On a big project that means crawling thousands of modules, transforming each one through loaders and writing a bundle to memory, which can take 30+ seconds. Every change then has to rebuild part of that bundle, so HMR gets slower as the app grows.
+
+Vite skips bundling in development and does three things differently:
+1. **Native ES modules.** The browser itself requests files via `import` statements. Vite only transforms the files the **current page actually imports**, on demand. A route you never open is never processed.
+2. **Dependency pre-bundling with esbuild.** `node_modules` packages rarely change but often consist of hundreds of files (lodash-es is about 600 modules) or are CommonJS. On first start, Vite bundles them once with esbuild (written in Go, 10–100× faster than JS-based tools), converts them to ESM and caches the result in `node_modules/.vite`, with strong browser caching on top.
+3. **HMR proportional to the change.** When you edit a file, Vite only invalidates that module and its boundary. The update cost stays roughly constant whether the app has 50 or 5,000 modules.
+
+For **production**, Vite still bundles (with Rollup, or Rolldown in newer versions), because shipping thousands of unbundled files would be slow for users.
+
+> One-liner: "Webpack bundles first and serves second. Vite serves native ES modules immediately, transforms only what's requested, and pre-bundles dependencies with esbuild."
+
+**Q: Loader vs plugin in Webpack?**
+
+| | Loader | Plugin |
+| --- | --- | --- |
+| Works on | **One file at a time**, as it's imported | The **whole build** (the compilation lifecycle) |
+| Job | Transform a file's content into JS Webpack understands | Anything else: generate files, optimise, inject variables |
+| Configured in | `module.rules` (`test` + `use`) | `plugins: [new SomePlugin()]` |
+| Examples | `babel-loader`, `ts-loader`, `sass-loader`, `css-loader`, `style-loader` | `HtmlWebpackPlugin`, `MiniCssExtractPlugin`, `DefinePlugin`, `BundleAnalyzerPlugin` |
+
+Webpack natively understands only JavaScript and JSON. **Loaders** teach it how to import other file types: `sass-loader` turns SCSS into CSS, `css-loader` resolves `@import`/`url()` and turns CSS into a JS module, and `style-loader` injects it into the page. Loaders are **chained and run right to left** (bottom to top): `use: ['style-loader', 'css-loader', 'sass-loader']` runs sass first.
+
+**Plugins** hook into events of the whole build (`emit`, `compilation`, `done`) to do things no single file transform could: create `index.html` with the bundle's script tags injected, extract all CSS into one file, replace `process.env.NODE_ENV` across the code, or analyse bundle size.
+
+> Easy way to remember: "A loader is a **translator** for one file. A plugin is a **manager** for the whole build."
+
+**Q: What is tree shaking and what breaks it?**
+
+Tree shaking is **dead-code elimination for unused exports**. If you `import { debounce } from 'lodash-es'`, the bundler includes `debounce` (and whatever it depends on) and drops the other ~300 functions. It works because ES module `import`/`export` statements are **static**: the bundler can see at build time exactly which exports are used, without running the code. The bundler marks unused exports, and the minifier then removes them.
+
+What breaks it:
+- **CommonJS** (`require` / `module.exports`): imports can be dynamic (`require(name)`) and exports can be modified at runtime, so the bundler has to keep the whole module. That's why `import _ from 'lodash'` pulls in all of lodash, while `lodash-es` or `lodash/debounce` doesn't.
+- **Side effects**: if a module does something when imported (patches a global, adds CSS, registers a polyfill), the bundler can't safely remove it even if you use none of its exports. Libraries declare `"sideEffects": false` (or a list like `["*.css"]`) in `package.json` to say "removing unused modules is safe".
+- **Importing everything**: `import * as utils from './utils'` used dynamically (`utils[name]()`) means the bundler can't know which exports are needed.
+- **Babel converting ESM to CommonJS**: with `@babel/preset-env`'s `modules: 'commonjs'`, the bundler never sees ESM. Use `modules: false` so the bundler handles modules.
+- **Barrel files with side effects**: an `index.ts` that re-exports everything can drag in modules with top-level code. It also slows down dev servers and tests.
+- **Development mode**: tree shaking only fully happens in production builds.
+
+> Say: "Tree shaking relies on static ES module syntax. CommonJS and side-effectful modules prevent it, which is why libraries ship ESM builds and set `sideEffects: false`."
+
+**Q: How do you reduce bundle size?**
+
+Answer it as a process, measure first:
+1. **Measure.** Run `rollup-plugin-visualizer` (Vite) or `webpack-bundle-analyzer` to see a treemap of what's in each chunk. Check Lighthouse and the Network tab for what users actually download. Optionally add a size budget in CI (`size-limit`).
+2. **Code-split routes and heavy components.** `React.lazy(() => import('./pages/Reports'))` + `<Suspense>`, so users download the reports page (and its chart library) only when they visit it.
+3. **Lazy-load heavy libraries on demand**: `const { jsPDF } = await import('jspdf')` inside the click handler for "Export PDF".
+4. **Make tree shaking work**: use ESM builds (`lodash-es`, per-function imports), avoid `import *`, check `sideEffects`.
+5. **Replace heavy dependencies**: moment.js (~70 KB+ with locales) → date-fns or dayjs, full lodash → native methods, a big UI kit → headless components. Check sizes on bundlephobia before adding a package.
+6. **Remove duplicates**: two versions of the same library (`npm ls react`, `npm dedupe`).
+7. **Split vendor chunks** for better caching (`manualChunks` / `splitChunks`). This doesn't shrink the total, but returning users re-download less after a deploy.
+8. **Assets**: compress images (WebP/AVIF), use SVG sprites or icon components that tree-shake (import single icons, not the whole set), subset fonts.
+9. **Serve efficiently**: gzip/Brotli compression at the server/CDN, long-term caching with content-hashed filenames, HTTP/2.
+
+> Say: "I'd measure first with a bundle analyzer, then lazy-load routes and heavy libraries, fix anything that blocks tree shaking, and swap oversized dependencies. In a past project that type of change [give your own number if you have one]."
+
+**Q: What is a source map?**
+
+Production code is **minified and bundled**: variable names are shortened, everything is on one line, and many files are merged. If an error happens, the stack trace says something like `index-a1b2c3.js:1:48213`, which is useless.
+
+A **source map** (`.js.map` file) is a JSON file that maps every position in the generated code back to the **original file, line, column and name**. Browser DevTools and error trackers use it to show `src/components/Cart.tsx:42` and let you set breakpoints in your real TypeScript.
+
+The bundle points to its map with a comment at the end: `//# sourceMappingURL=index-a1b2c3.js.map`.
+
+Production options:
+- **Public source maps**: easy debugging in DevTools, but anyone can read your original source code.
+- **Hidden source maps** (`hidden-source-map` in Webpack, or generate them but don't deploy the `.map` files): upload them to **Sentry** or a similar error tracker, so you get readable stack traces privately. This is the common choice.
+- **None**: smallest deploy, but unreadable production errors.
+
+In development, bundlers use fast, cheaper map types (e.g. Webpack's `eval-cheap-module-source-map`) to keep rebuilds quick. Vite generates them automatically in dev, and `build.sourcemap: true` (or `'hidden'`) controls production.
+
+> One-liner: "A source map links minified production code back to the original source, so stack traces and debugging point to real files and lines. In production I usually upload them privately to Sentry instead of serving them publicly."
+
 ### Gotchas
 
 - Vite's dev mode (unbundled ESM) and build (Rollup) can behave differently. Always test `vite build && vite preview`.

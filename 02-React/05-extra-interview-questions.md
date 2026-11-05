@@ -23,7 +23,7 @@ React compares old and new state with `Object.is`. Mutating keeps the same refer
 `&&` (careful with `0`), the ternary, early `return null`, or an object map: `{ loading: <Spinner/>, error: <Error/> }[status]`.
 
 **Q: How does event handling differ from the DOM?**
-camelCase names, functions instead of strings, and **synthetic events**: a cross-browser wrapper. Since React 17, listeners are attached to the **root container**, not `document`. Return `false` doesn't prevent default; call `e.preventDefault()`.
+camelCase names, functions instead of strings, and **synthetic events**: a cross-browser wrapper. Since React 17, listeners are attached to the **root container**, not `document`. Return `false` doesn't prevent default; call `event.preventDefault()`.
 
 **Q: Class component lifecycle → hooks mapping?**
 | Class | Hooks |
@@ -43,12 +43,16 @@ React queues the update and schedules a re-render (batched with other updates in
 **Q: Explain batching with an example.**
 ```js
 const handleClick = () => {
-  setCount((c) => c + 1);
-  setFlag((f) => !f);
+  setCount((previousCount) => previousCount + 1);
+  setIsHighlighted((wasHighlighted) => !wasHighlighted);
   // ONE re-render, not two. Since React 18 this also applies inside setTimeout/promises.
 };
 // Opt out (rarely needed): flushSync(() => setCount(1));
 ```
+
+- `setCount` / `setIsHighlighted`: two separate pieces of state, updated in one click.
+- `previousCount` / `wasHighlighted`: the latest values React passes into each updater function.
+- `flushSync`: forces React to apply the update immediately instead of batching it.
 
 **Q: When does `useEffect` run, and in what order with children?**
 After the browser paints. Child effects run **before** parent effects (bottom-up), because children commit first. On a re-render: the previous cleanup runs, then the new effect runs.
@@ -66,11 +70,16 @@ Passing props through components that don't need them. Solutions: **composition*
 Every consumer re-renders when the provider's `value` changes. Fixes:
 ```tsx
 // 1. Memoize the value
-const value = useMemo(() => ({ user, login, logout }), [user]);
+const authContextValue = useMemo(() => ({ user, login, logout }), [user, login, logout]);
 // 2. Split state and dispatch into two contexts (dispatch never changes)
-<StateCtx.Provider value={state}><DispatchCtx.Provider value={dispatch}>…
+<TodosStateContext.Provider value={todosState}>
+  <TodosDispatchContext.Provider value={dispatch}>…
 // 3. Use a store with selectors (Zustand / Redux) for high-frequency updates
 ```
+
+- `authContextValue`: the object every consumer receives. Without `useMemo` it's a new object each render, so every consumer re-renders.
+- `todosState`: the data. It changes often, and only components that *display* it subscribe to it.
+- `dispatch`: from `useReducer`. It never changes identity, so components that only *send* actions (like an "Add" button) don't re-render when the data changes.
 
 **Q: `useMemo` vs `useCallback` vs `React.memo`?**
 `useMemo(() => compute(), deps)` caches a **value**. `useCallback(fn, deps)` caches a **function** (it's `useMemo(() => fn, deps)`). `React.memo(Component)` skips re-rendering a **component** if its props are shallowly equal. They only help together: `useCallback` is pointless unless the receiver is memoized or uses the function as a dep.
@@ -79,7 +88,7 @@ const value = useMemo(() => ({ user, login, logout }), [user]);
 For cheap calculations, or for components that re-render with new props anyway. Memoization has a cost (memory plus comparing deps) and adds complexity. Measure first. The React Compiler is making manual memoization less necessary.
 
 **Q: Controlled component: how do you handle many inputs?**
-One state object and one handler with `name`: `setForm(f => ({ ...f, [e.target.name]: e.target.value }))`. For big forms, use React Hook Form (uncontrolled plus refs, so fewer re-renders).
+One state object and one handler with `name`: `setFormValues(previousValues => ({ ...previousValues, [event.target.name]: event.target.value }))`. Here `event.target.name` is the input's `name` attribute (`"email"`), used as a computed key, so one handler updates whichever field changed. For big forms, use React Hook Form (uncontrolled plus refs, so fewer re-renders).
 
 **Q: What is `key` beyond lists?**
 A way to **reset** a component. `<Profile key={userId} />` remounts with fresh state when `userId` changes, which is cleaner than an effect that resets state.
@@ -111,16 +120,23 @@ Rendering is interruptible. React can prepare a new UI in the background while k
 ```tsx
 // useTransition: you control the state update
 const [isPending, startTransition] = useTransition();
-const onChange = (e) => {
-  setInput(e.target.value);                         // urgent: the input stays snappy
-  startTransition(() => setFilter(e.target.value)); // non-urgent: heavy list can lag
+const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  setInputText(event.target.value);                         // urgent: the input stays snappy
+  startTransition(() => setFilterText(event.target.value)); // non-urgent: heavy list can lag
 };
 
 // useDeferredValue: you only receive the value (e.g. via props)
 const deferredQuery = useDeferredValue(query);
-const results = useMemo(() => bigFilter(items, deferredQuery), [deferredQuery]);
-const isStale = query !== deferredQuery;
+const filteredResults = useMemo(() => filterLargeList(allItems, deferredQuery), [allItems, deferredQuery]);
+const isShowingOldResults = query !== deferredQuery;
 ```
+
+- `inputText`: what the text box shows, updated immediately.
+- `filterText`: what the heavy list filters by, updated at low priority.
+- `isPending`: `true` while the low-priority render hasn't finished.
+- `query` / `deferredQuery`: the latest value, and a copy that's allowed to lag behind it.
+- `filteredResults`: recomputed only when `deferredQuery` changes, not on every keystroke.
+- `isShowingOldResults`: `true` while the list still reflects an older query. Use it to dim the list.
 Neither one debounces. They render at lower priority and get interrupted when new input arrives.
 
 **Q: How does Suspense work?**
@@ -154,15 +170,23 @@ Hydration means React attaches event listeners and state to server-rendered HTML
 
 ```tsx
 // useOptimistic example
-function Likes({ count, likeAction }) {
-  const [optimisticCount, addOptimistic] = useOptimistic(count, (c, delta: number) => c + delta);
+function LikeButton({ likeCount, saveLike }: { likeCount: number; saveLike: () => Promise<void> }) {
+  const [optimisticLikeCount, addOptimisticLikes] = useOptimistic(
+    likeCount,
+    (currentCount, increment: number) => currentCount + increment,
+  );
   return (
-    <form action={async () => { addOptimistic(1); await likeAction(); }}>
-      <button>❤️ {optimisticCount}</button>
+    <form action={async () => { addOptimisticLikes(1); await saveLike(); }}>
+      <button>❤️ {optimisticLikeCount}</button>
     </form>
   );
 }
 ```
+
+- `likeCount`: the real count from the server.
+- `saveLike`: the async call that records the like.
+- `optimisticLikeCount`: what's displayed. It's `likeCount + 1` while saving, then the real `likeCount` again when the action ends.
+- `addOptimisticLikes(1)`: applies the updater `(currentCount, increment) => currentCount + increment` right away.
 
 **Q: What is the React Compiler?**
 A build-time Babel plugin that automatically memoizes components and values, so most `useMemo`, `useCallback` and `React.memo` become unnecessary. It requires code that follows the Rules of React (pure renders, no mutation of props or state).
@@ -178,32 +202,55 @@ Measuring a tooltip's size and repositioning it **before paint**, so the user ne
 
 **Q: `useImperativeHandle` example?**
 ```tsx
-function VideoPlayer({ ref, src }) {
-  const videoRef = useRef<HTMLVideoElement>(null);
+type PlayerControls = { play: () => void; pause: () => void };
+
+function VideoPlayer({ ref, videoUrl }: { ref: React.Ref<PlayerControls>; videoUrl: string }) {
+  const videoElementRef = useRef<HTMLVideoElement>(null);
   useImperativeHandle(ref, () => ({
-    play: () => videoRef.current?.play(),
-    pause: () => videoRef.current?.pause(),
+    play: () => videoElementRef.current?.play(),
+    pause: () => videoElementRef.current?.pause(),
   }), []);
-  return <video ref={videoRef} src={src} />;
+  return <video ref={videoElementRef} src={videoUrl} />;
 }
-// Parent: playerRef.current.play() exposes a limited API instead of the raw DOM node
+
+// Parent
+const playerControlsRef = useRef<PlayerControls>(null);
+<VideoPlayer ref={playerControlsRef} videoUrl="/intro.mp4" />
+<button onClick={() => playerControlsRef.current?.play()}>Play</button>
 ```
+
+- `PlayerControls`: the small API the parent is allowed to use.
+- `ref` (prop): the parent's ref. `useImperativeHandle` decides what the parent sees in `ref.current`.
+- `videoElementRef`: this component's private ref to the real `<video>` element.
+- `playerControlsRef`: in the parent, it holds `{ play, pause }`, *not* the raw DOM node, so the parent can't mess with the video in other ways.
 
 **Q: What is the "lifting content up" (children) optimisation?**
 ```tsx
 // Slow: ExpensiveTree re-renders on every mouse move
 function App() {
-  const [pos, setPos] = useState({ x: 0, y: 0 });
-  return <div onMouseMove={(e) => setPos({ x: e.clientX, y: e.clientY })}><ExpensiveTree /></div>;
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  return (
+    <div onMouseMove={(event) => setMousePosition({ x: event.clientX, y: event.clientY })}>
+      <ExpensiveTree />
+    </div>
+  );
 }
 
 // Fast: ExpensiveTree is created by the parent, so its element reference is stable
-function MouseTracker({ children }) {
-  const [pos, setPos] = useState({ x: 0, y: 0 });
-  return <div onMouseMove={(e) => setPos({ x: e.clientX, y: e.clientY })}>{children}</div>;
+function MouseTracker({ children }: { children: React.ReactNode }) {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  return (
+    <div onMouseMove={(event) => setMousePosition({ x: event.clientX, y: event.clientY })}>
+      {children}
+    </div>
+  );
 }
 <MouseTracker><ExpensiveTree /></MouseTracker>;
 ```
+
+- `mousePosition`: the cursor's `{ x, y }`, which changes many times per second.
+- `event.clientX` / `event.clientY`: the cursor position relative to the browser window.
+- `children`: the `<ExpensiveTree />` element, created by whoever renders `MouseTracker`. When `MouseTracker` re-renders, `children` is the same object as before, so React skips re-rendering `ExpensiveTree`.
 
 **Q: How do you manage state in a large app? (architecture answer)**
 - **Server state** → TanStack Query (caching, sync).
