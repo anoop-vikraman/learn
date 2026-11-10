@@ -18,6 +18,8 @@ Your original notes from `React Interview Crash Plan.md` are split word for word
 | 11 | [Docker](11-Docker/) | notes | dev/prod Dockerfiles, runtime config, full Compose, Q&A |
 | 12 | [Web Fundamentals](12-Web-Fundamentals-Performance-Security/) | *(new folder)* | HTTP, caching, CORS, XSS/CSRF, Core Web Vitals, a11y, system design (RADIO) |
 | 13 | [Behavioral + Final Checklist](13-Behavioral-Final-Checklist/) | stories + checklist | intro template, STAR examples, questions to ask, interview-day plan |
+| 14 | [CV Project Questions](14-CV-Project-Questions/) | *(new folder)* | questions + model answers for each CV project (Procurement, Knowledge Graph, Winmore), every listed skill, CV red flags, STAR stories |
+| 15 | [Zustand + Redux](15-Zustand-Redux/) | *(new folder)* | Zustand guide (selectors, useShallow, middleware, slices, testing), Redux Toolkit guide (createSlice, thunks, createSelector, entity adapter, RTK Query, listeners), side-by-side comparison + decision guide |
 
 ## Suggested order if time is short
 
