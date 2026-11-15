@@ -20,6 +20,7 @@ Your original notes from `React Interview Crash Plan.md` are split word for word
 | 13 | [Behavioral + Final Checklist](13-Behavioral-Final-Checklist/) | stories + checklist | intro template, STAR examples, questions to ask, interview-day plan |
 | 14 | [CV Project Questions](14-CV-Project-Questions/) | *(new folder)* | questions + model answers for each CV project (Procurement, Knowledge Graph, Winmore), every listed skill, CV red flags, STAR stories |
 | 15 | [Zustand + Redux](15-Zustand-Redux/) | *(new folder)* | Zustand guide (selectors, useShallow, middleware, slices, testing), Redux Toolkit guide (createSlice, thunks, createSelector, entity adapter, RTK Query, listeners), side-by-side comparison + decision guide |
+| 16 | [Next.js](16-NextJS/) | *(new folder)* | How Next.js works internally, routing, server/client components, data fetching + caching, server actions, route handlers/middleware/auth, optimization + SEO, **interview Q&A**, production |
 
 ## Complete beginner? Start with the basics folders
 
@@ -28,6 +29,7 @@ Each of these has numbered lessons from zero plus a `cheat-sheet.md` (functions,
 1. [01-JavaScript/basics/](01-JavaScript/basics/): variables, functions, arrays, objects, async, DOM (8 lessons)
 2. [02-React/basics/](02-React/basics/): JSX, props, state, forms, effects, context, routing (6 lessons)
 3. [03-TypeScript/basics/](03-TypeScript/basics/): types, interfaces, generics, utility types, TS with React (5 lessons)
+4. [16-NextJS/](16-NextJS/): the React framework — start with `00-how-nextjs-works.md` (8 lessons + production)
 
 ## Suggested order if time is short
 
