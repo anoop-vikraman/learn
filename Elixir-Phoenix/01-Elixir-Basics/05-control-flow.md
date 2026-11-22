@@ -1,5 +1,7 @@
 # 05 · Control flow
 
+> **Plain English:** Control flow is how a program makes decisions. Elixir has no loops and no `return` keyword. Every `if`, `case` and `cond` *produces a value*, like a vending machine that always gives you something back. You'll make most decisions with pattern matching, and use `case`/`cond`/`if` for the rest.
+
 Elixir has no `for` loops in the JS sense, no `while`, no `return`, and no `break`. Everything is an **expression** that returns a value.
 
 ## 1. `case`: match a value against patterns

@@ -1,5 +1,7 @@
 # 04 · Performance, observability and debugging
 
+> **Plain English:** Observability means being able to see what your running app is doing: how fast requests are, how much memory is used, what's failing. Elixir has excellent built-in tools for this, including a live dashboard in the browser and the ability to open a shell **inside a running production server** and inspect it without restarting.
+
 ## 1. Debugging tools
 
 > **In short:** Use `IO.inspect` with labels in pipelines, `dbg/1` for step-by-step pipe output, IEx breakpoints, and a remote IEx session into running systems.

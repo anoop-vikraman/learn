@@ -1,5 +1,7 @@
 # 01 · Phoenix setup and project structure
 
+> **Plain English:** Phoenix is the web framework: it receives HTTP requests and sends back pages or JSON. A new project has two main halves. `my_app/` is the "kitchen" (business logic and data) and `my_app_web/` is the "dining room" (routes, pages, controllers). Keeping them separate means the same kitchen can serve web pages, an API and background jobs.
+
 ## 1. Create and run an app
 
 > **In short:** `mix phx.new my_app`, then `mix ecto.create`, then `mix phx.server`, and open localhost:4000.

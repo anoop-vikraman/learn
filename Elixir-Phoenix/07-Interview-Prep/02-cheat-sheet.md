@@ -176,6 +176,63 @@ allow_upload(socket, :file, accept: ~w(.png), max_entries: 1)  consume_uploaded_
 <button phx-click={JS.toggle(to: "#menu")}>   <div id="c" phx-hook="Chart" phx-update="ignore">
 ```
 
+## Dates, money, JSON, files
+
+```elixir
+Date.utc_today()  DateTime.utc_now()  Date.add(d, 7)  Date.diff(a, b)  Date.shift(d, month: 1)
+Date.compare(a, b)  Date.after?(a, b)  Enum.sort(dates, Date)       # never a < b on dates
+DateTime.shift_zone!(dt, "Asia/Kolkata")   # needs the :tz/:tzdata time zone database
+Calendar.strftime(dt, "%d %b %Y")
+Decimal.new("19.99") |> Decimal.mult(3) |> Decimal.round(2)
+JSON.encode!(map)  JSON.decode!(str)   # Elixir 1.18+ (or Jason.*)
+File.read/write/stream!  Path.join  System.fetch_env!("X")  System.cmd("git", ["status"])
+Application.fetch_env!(:app, :key)    # inside functions = runtime
+```
+
+## Macros
+
+```elixir
+quote do: 1 + 2          # AST: {:+, meta, [1, 2]}
+quote do: x + unquote(y) # inject a value
+defmacro m(expr), do: quote(do: unquote(expr) * 2)
+defmacro __using__(opts), do: quote(do: import Helpers)   # what `use` calls
+```
+
+## Ecto advanced
+
+```elixir
+many_to_many :tags, Tag, join_through: "tasks_tags", on_replace: :delete
+embeds_many :items, Item, on_replace: :delete   # + cast_embed(:items)
+put_assoc(cs, :tags, tags)   cast_assoc(cs, :comments)
+Repo.insert(cs, on_conflict: {:replace, [:title]}, conflict_target: [:user_id, :title])
+where(q, ^dynamic([t], t.done == ^done))
+from a in Account, where: a.id == ^id, lock: "FOR UPDATE"
+optimistic_lock(cs, :lock_version)
+@primary_key {:id, :binary_id, autogenerate: true}
+```
+
+## Web plumbing
+
+```elixir
+put_session(conn, :k, v)  get_session(conn, :k)  configure_session(conn, renew: true)
+put_resp_cookie(conn, "theme", "dark", sign: true)  fetch_cookies(conn, signed: ["theme"])
+Phoenix.Token.sign(Endpoint, "salt", data)  Phoenix.Token.verify(Endpoint, "salt", tok, max_age: 86400)
+new() |> to(email) |> from(addr) |> subject(s) |> text_body(b) |> Mailer.deliver()
+Req.get!(url, params: [q: 1], auth: {:bearer, t}, receive_timeout: 5_000).body
+Plug.Crypto.secure_compare(a, b)   :crypto.mac(:hmac, :sha256, secret, body)
+```
+
+## LiveView advanced
+
+```elixir
+live_session :auth, on_mount: [{UserAuth, :require_authenticated}] do ... end
+def on_mount(:default, params, session, socket), do: {:cont, socket}   # or {:halt, redirect(...)}
+attach_hook(socket, :name, :handle_params, fn params, url, socket -> {:cont, socket} end)
+assign_async(socket, [:a, :b], fn -> {:ok, %{a: 1, b: 2}} end)
+start_async(socket, :job, fn -> work() end)  →  handle_async(:job, {:ok, result} | {:exit, reason}, socket)
+live_render(@socket, ChildLive, id: "x", session: %{}, sticky: true)
+```
+
 ## The 10 sentences to have ready
 
 1. The BEAM runs millions of isolated, preemptively scheduled lightweight processes that communicate by message passing.

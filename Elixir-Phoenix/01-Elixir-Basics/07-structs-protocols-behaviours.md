@@ -1,5 +1,7 @@
 # 07 · Structs, protocols and behaviours
 
+> **Plain English:** Without classes, how do you describe "a User" or say "anything that can be printed"? A **struct** is a map with a fixed list of fields, like a form with set boxes. A **protocol** lets different data types respond to the same function in their own way. A **behaviour** is a contract saying "any module that claims this role must have these functions", like a job description.
+
 Without classes, how do you model data and polymorphism? Use **structs** for data, **protocols** for polymorphism over data types, and **behaviours** for module-level interfaces.
 
 ## 1. Structs: maps with a fixed shape

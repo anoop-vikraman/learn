@@ -7,6 +7,7 @@ LiveView gives you rich, real-time UI **without writing a JavaScript front end**
 | 01 | [LiveView basics](01-liveview-basics.md) | Intermediate | How it works, lifecycle (`mount` runs twice), assigns, events, `handle_params`, live navigation, async data |
 | 02 | [Components and forms](02-components-and-forms.md) | Intermediate | Function components (`attr`, `slot`), core components, live components, forms with changesets and live validation |
 | 03 | [Streams, real-time, uploads and JS](03-streams-pubsub-uploads-hooks.md) | Pro | Streams for large lists, PubSub real-time updates, Presence, file uploads, `JS` commands, client hooks, testing |
+| 04 | [LiveView advanced](04-liveview-advanced.md) | Pro | `live_session`, custom `on_mount` and `attach_hook`, `assign_async`/`start_async`, loading states and optimistic UI, nested and sticky LiveViews, memory at scale, crashes, reconnects and form recovery, security, performance, latency simulation |
 
 **React developer's mental model:**
 

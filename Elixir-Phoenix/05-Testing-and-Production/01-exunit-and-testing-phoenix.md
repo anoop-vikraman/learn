@@ -1,5 +1,7 @@
 # 01 · ExUnit and testing Phoenix
 
+> **Plain English:** Tests are small programs that check your code works and keeps working. Elixir's built-in test tool, ExUnit, runs tests **in parallel**, even ones that use the database, because each test works inside its own transaction that's thrown away afterwards, like a sandbox that resets after every game.
+
 ## 1. ExUnit basics
 
 > **In short:** Tests are `.exs` files in `test/`. `use ExUnit.Case`, write `test "name" do ... end`, and assert with `assert`/`refute`. Run them with `mix test`.

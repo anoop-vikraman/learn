@@ -1,5 +1,7 @@
 # 03 · Releases, Docker and deployment
 
+> **Plain English:** Deploying means getting your app running on a server for real users. A **release** packs your app and the Elixir runtime into one self-contained folder, like a ready-to-eat meal box. **Docker** puts that box in a standard container. Then you ship it to a host such as Fly.io, run database migrations, and connect several servers together if you need more capacity.
+
 ## 1. Releases
 
 > **In short:** `mix release` builds a **self-contained package** (your compiled code, dependencies and the Erlang runtime) that runs without Elixir or Mix installed. It's the standard way to deploy.

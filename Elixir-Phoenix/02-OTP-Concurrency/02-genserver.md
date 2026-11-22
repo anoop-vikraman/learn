@@ -1,5 +1,7 @@
 # 02 · GenServer
 
+> **Plain English:** A GenServer is a worker that **remembers something** (its state) and answers requests about it. Picture a shop assistant who keeps the stock count. You can *ask* and wait for an answer (`call`), or *tell* them something and walk away (`cast`). Because they serve one customer at a time, the count never gets mixed up, and you need no locks.
+
 **GenServer** = "generic server". It's the hand-written loop from the last lesson, standardised. Expect at least one interview question asking you to write or explain a GenServer.
 
 ## 1. Anatomy

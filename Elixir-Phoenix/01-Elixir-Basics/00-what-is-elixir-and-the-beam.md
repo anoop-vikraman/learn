@@ -1,5 +1,7 @@
 # 00 · What is Elixir, and what is the BEAM?
 
+> **Plain English:** Elixir is a programming language, and the BEAM is the engine that runs it. Picture an office with thousands of tiny workers who each have a private desk and talk only by passing notes. If one worker gets confused, a manager replaces them, and nobody else is disturbed. That design is why Elixir apps handle huge numbers of users and rarely go down.
+
 Read this first for the big picture. Interviewers often open with "Why Elixir?", and this lesson is the answer.
 
 ## 1. Elixir in one paragraph

@@ -1,5 +1,7 @@
 # 03 · Streams, real-time, uploads, JS and testing
 
+> **Plain English:** This lesson covers the features that make LiveView apps feel modern: **streams** (show huge lists without the server remembering every row), **real-time updates** (one user's change appears instantly for everyone), **uploads** (with progress bars and previews), **JS commands** (instant effects with no server trip), and **hooks** (plug in any JavaScript library).
+
 ## 1. Streams: large lists without server memory
 
 > **In short:** Streams send list items to the client and then **forget them on the server**. You insert, update or delete individual items by id, so 10,000 rows don't sit in every user's process.

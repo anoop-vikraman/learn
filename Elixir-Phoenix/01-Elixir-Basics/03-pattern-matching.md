@@ -1,5 +1,7 @@
 # 03 · Pattern matching
 
+> **Plain English:** Pattern matching means saying "I expect the data to look like *this*" and pulling out the parts you need in one step. Think of a mail sorter: envelopes with a red stamp go here, blue go there. Instead of writing `if result.ok ... else ...`, you describe the shapes and Elixir picks the right branch. This is the most important idea in the language.
+
 This is the single most important concept in Elixir. Once it clicks, the rest of the language follows.
 
 ## 1. `=` is the match operator, not assignment

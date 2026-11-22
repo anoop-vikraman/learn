@@ -1,5 +1,7 @@
 # 05 · Authentication and authorization
 
+> **Plain English:** **Authentication** asks "who are you?" (login). **Authorization** asks "are you allowed to do this?" (permissions). Phoenix writes a complete, secure login system into your project with one command. This lesson explains how it works: like a cloakroom ticket, the browser holds a token and the server keeps a matching record, so it can recognise you, and cancel the ticket on logout.
+
 ## 1. `mix phx.gen.auth`: don't hand-roll auth
 
 > **In short:** Phoenix ships an auth generator that writes **all** the code into your app (no hidden library): registration, login, sessions, tokens, emails and tests. You own the code and can change it.

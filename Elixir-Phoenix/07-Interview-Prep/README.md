@@ -2,7 +2,7 @@
 
 | # | File | Use it for |
 | --- | --- | --- |
-| 01 | [Interview questions](01-interview-questions.md) | ~60 questions with collapsible answers: language, OTP, Phoenix, Ecto, LiveView, architecture, scenarios and live-coding tasks |
+| 01 | [Interview questions](01-interview-questions.md) | ~75 questions with collapsible answers: language, OTP, Phoenix, Ecto, LiveView, advanced topics (macros, dates, locking, webhooks, security), architecture, scenarios and live-coding tasks |
 | 02 | [Cheat sheet](02-cheat-sheet.md) | One-page syntax and API reference to re-read the night before |
 | 03 | [Coming from JS/Python](03-coming-from-js-python.md) | Translation tables, and how to talk about your background and the switch to Elixir |
 

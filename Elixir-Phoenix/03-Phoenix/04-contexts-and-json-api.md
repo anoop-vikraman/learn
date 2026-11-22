@@ -1,5 +1,7 @@
 # 04 · Contexts and JSON APIs
 
+> **Plain English:** A **context** is the "kitchen" for one part of your business, such as `Accounts` or `Tasks`. Controllers and pages ask the kitchen to do things ("create a task") instead of touching the database themselves. Then this lesson builds a **JSON API**: the same kitchen, serving data to mobile apps or a React front end instead of HTML.
+
 ## 1. Contexts: the boundary of your domain
 
 > **In short:** A context is a plain module (e.g. `MyApp.Tasks`) that exposes the **public API** for one area of the business. Controllers and LiveViews call context functions and never call `Repo` directly.

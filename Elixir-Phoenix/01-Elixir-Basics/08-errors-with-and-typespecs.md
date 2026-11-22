@@ -1,5 +1,7 @@
 # 08 · Errors, `with`, typespecs and docs
 
+> **Plain English:** Some failures are *expected* (a wrong password, a missing record). Elixir returns those as values such as `{:error, :not_found}` that you handle. Others are *unexpected* (bugs). Those crash the process, and a supervisor restarts it. `with` lets you write "do step 1, then 2, then 3, and stop at the first problem" cleanly. Typespecs are optional type labels that help tools catch mistakes.
+
 ## 1. Two ways to signal failure
 
 > **In short:** For **expected** failures, return `{:error, reason}`. For **exceptional** failures (bugs, broken invariants), raise an exception and usually let it crash.

@@ -1,5 +1,7 @@
 # 01 · LiveView basics
 
+> **Plain English:** LiveView lets you build interactive pages like React, but the state and logic stay on the server. The page keeps an open line (WebSocket) to a small server process. When you click, the server updates its data, works out exactly what changed on the page, and sends back only that tiny change. You get no separate API and no client-side state library.
+
 ## 1. How LiveView works
 
 > **In short:** The first request returns full HTML (fast, SEO-friendly). Then the browser opens a WebSocket, a stateful LiveView **process** starts on the server, and every event sends back only the **changed parts** of the page.

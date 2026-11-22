@@ -1,5 +1,7 @@
 # 01 · Processes and messages
 
+> **Plain English:** A process is a tiny independent worker with its own private memory and an inbox. Workers never share memory. They only send each other messages (notes in the inbox), and each reads its inbox one note at a time. Because they're so cheap, you can run millions. Everything in OTP, Phoenix and LiveView is built on this.
+
 ## 1. Spawning a process
 
 > **In short:** `spawn(fn -> ... end)` starts a new process and returns its **PID** (process identifier). It runs concurrently and exits when its function finishes.

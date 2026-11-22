@@ -1,5 +1,7 @@
 # 03 · Supervisors and applications
 
+> **Plain English:** A supervisor is a team lead whose only job is to watch workers and replace any who crash, with fresh ones that start clean. Supervisors can supervise other supervisors, forming a tree. Your whole application is one big tree, which is why Elixir systems heal themselves instead of falling over.
+
 ## 1. What a supervisor does
 
 > **In short:** A supervisor is a process that starts child processes, watches them through links, and **restarts** them according to a strategy when they crash.

@@ -467,6 +467,101 @@ Run multiple nodes behind a load balancer, clustered so PubSub and Presence work
 
 ---
 
+## G0. Advanced topics (data, macros, Ecto, LiveView, security)
+
+<details>
+<summary>How do strings work in Elixir, and why do byte_size and String.length differ?</summary>
+
+Strings are UTF-8 encoded binaries. `byte_size` counts bytes, while `String.length` counts graphemes (user-perceived characters), which can be several bytes or codepoints each. Binary pattern matching (`"prefix" <> rest`, `<<a::8, rest::binary>>`) lets you parse text and protocols efficiently. See [01/09](../01-Elixir-Basics/09-binaries-unicode-dates-numbers.md).
+
+</details>
+
+<details>
+<summary>How do you handle money and dates correctly?</summary>
+
+Money: use `Decimal` (Ecto `:decimal`) or integer cents, never floats. Dates: store UTC `DateTime` (`:utc_datetime`), convert to the user's zone only for display (with a tz database such as `tz`), and compare with `Date.compare/2` or `DateTime.compare/2` (or `Enum.sort(list, Date)`), never with `<`/`>`.
+
+</details>
+
+<details>
+<summary>What's the difference between compile-time and runtime configuration?</summary>
+
+Files like `config.exs`/`prod.exs` and module attributes reading `Application.get_env` are evaluated at compile time and baked into the build. `runtime.exs` and `Application.get_env` called inside functions are evaluated at boot or at call time. Secrets and env vars belong in `runtime.exs`. Use `Application.compile_env` when you intentionally read config at compile time.
+
+</details>
+
+<details>
+<summary>How would you explain macros to a junior developer?</summary>
+
+A macro is a function that runs at compile time, receives code as data (the AST) instead of values, and returns new code that gets compiled in its place. It's how `if`, `def`, Ecto queries, the Phoenix router and `use` work. Prefer plain functions, and write macros only for DSLs, code generation, or when you need the unevaluated expression.
+
+</details>
+
+<details>
+<summary>When would you use gen_statem, GenStage, or Broadway?</summary>
+
+`gen_statem` for live processes that are state machines with state-dependent behaviour and timeouts (protocols, devices). GenStage for demand-driven pipelines with back-pressure. Broadway (built on GenStage) for consuming external queues (SQS, Kafka, RabbitMQ) with concurrency, batching and acknowledgements.
+
+</details>
+
+<details>
+<summary>How do you prevent two users from overwriting each other's edits?</summary>
+
+Optimistic locking with a version column (`optimistic_lock/2`, which raises `StaleEntryError` on conflict, so you ask the user to reload). Pessimistic locking with `lock: "FOR UPDATE"` inside a transaction for critical check-then-update logic. Or atomic conditional updates (`update_all` with a `where` guard).
+
+</details>
+
+<details>
+<summary>How do you build search filters safely with Ecto?</summary>
+
+Start from a scoped base query, reduce over whitelisted params with `dynamic/2` to build the `where` clause, map sort keys through a whitelist, paginate, and validate inputs with an embedded or schemaless changeset. Never turn raw params into atoms or field names.
+
+</details>
+
+<details>
+<summary>Embedded schema vs separate table?</summary>
+
+Embed (`embeds_one`/`embeds_many`, stored as JSONB) when the data is always read and written with its parent and never queried on its own: settings, addresses, checklists. Use a separate table when you need to query, join, index or update the items independently.
+
+</details>
+
+<details>
+<summary>How does Phoenix store sessions, and how do you use Phoenix.Token?</summary>
+
+Sessions are stored in a cookie, signed (and optionally encrypted) with `secret_key_base`, and limited to about 4 KB. `phx.gen.auth` stores only a token there and keeps hashed tokens in the DB, so they can be revoked. `Phoenix.Token.sign/verify` creates signed, expiring strings for socket auth, invite links and email links. They're readable by anyone, so never put secrets in them.
+
+</details>
+
+<details>
+<summary>How do you receive webhooks safely?</summary>
+
+Keep the raw body with a custom `body_reader`, verify the HMAC signature (and timestamp) with `Plug.Crypto.secure_compare/2`, return 200 quickly, process in an Oban job, and make processing idempotent with a unique event id.
+
+</details>
+
+<details>
+<summary>What do live_session and on_mount do?</summary>
+
+A `live_session` groups LiveViews that share `on_mount` hooks and allows navigating between them without a full page reload. `on_mount` runs on both the HTTP and WebSocket mounts, so it's where you enforce auth and set shared assigns (locale, current user). `attach_hook` lets a hook intercept params, events or messages for every LiveView in the session.
+
+</details>
+
+<details>
+<summary>How do you keep a LiveView responsive while doing slow work?</summary>
+
+Use `assign_async` for loading data and `start_async`/`handle_async` for actions, with loading and failure UI (`<.async_result>`). Give instant feedback with `phx-disable-with`, `phx-*-loading` classes and JS commands. Use Oban plus PubSub progress updates for long-running jobs.
+
+</details>
+
+<details>
+<summary>Name five security mistakes you'd look for in a Phoenix code review.</summary>
+
+(1) Records fetched by id without scoping to the current user (IDOR), including in LiveView events. (2) `raw/1` on user content (XSS). (3) String interpolation into SQL or `fragment`. (4) `String.to_atom` on input. (5) Casting privileged fields like `role` or `user_id` from params. Also: no rate limits on login, secrets in config files, open redirects, and missing `check_origin`/`force_ssl`.
+
+</details>
+
+---
+
 ## G. Live-coding warm-ups
 
 Practise these in `iex` until you can write each one in under 5 minutes.

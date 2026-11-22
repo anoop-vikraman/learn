@@ -1,5 +1,7 @@
 # 01 · Setup, IEx and Mix
 
+> **Plain English:** **IEx** is a playground where you type Elixir and see the result immediately (like the browser console). **Mix** is your project assistant: it creates projects, installs packages, runs tests and starts your app (like npm). You'll use both every day.
+
 ## 1. IEx: your best friend
 
 > **In short:** `iex` is the REPL. Use it constantly, especially `h` for docs and `i` to inspect values.

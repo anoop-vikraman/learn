@@ -1,5 +1,7 @@
 # 02 · Background jobs with Oban
 
+> **Plain English:** Some work shouldn't make the user wait: sending emails, generating reports, calling slow APIs. Oban is a to-do list kept in your database. Jobs are written down first, so they survive crashes and restarts, are retried if they fail, and can be scheduled for later or run on a timetable.
+
 ## 1. Why Oban (and not just a Task)?
 
 > **In short:** Oban stores jobs in **Postgres**, so they survive restarts and deploys, retry with backoff, run once across a cluster, and can be scheduled. It's the standard choice in Elixir, like BullMQ or Celery but without Redis.

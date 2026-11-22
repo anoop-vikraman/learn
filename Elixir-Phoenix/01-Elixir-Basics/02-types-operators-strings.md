@@ -1,5 +1,7 @@
 # 02 · Types, operators and strings
 
+> **Plain English:** These are the building blocks of all data: numbers, text, true/false, *atoms* (named labels like `:ok`), and containers (lists, tuples, maps). The big difference from JavaScript is that **nothing can be changed in place**. Every "change" gives you a new copy, like saving a new version of a document instead of editing the original.
+
 Type everything here into `iex`.
 
 ## 1. Immutability first

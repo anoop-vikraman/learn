@@ -1,5 +1,7 @@
 # 06 · Channels, PubSub and Presence
 
+> **Plain English:** This is the real-time toolkit. **PubSub** is an office loudspeaker: anyone can announce on a channel name, and everyone tuned in hears it. **Channels** keep a two-way WebSocket open with browsers or mobile apps. **Presence** keeps a live "who's in the room" list. Together they power chat, live dashboards and collaboration.
+
 Real-time features are why many companies pick Phoenix. Each WebSocket connection is a cheap BEAM process, which is how Phoenix handled **2 million concurrent WebSocket connections on one server** in a well-known 2015 benchmark.
 
 ## 1. Phoenix.PubSub: the backbone

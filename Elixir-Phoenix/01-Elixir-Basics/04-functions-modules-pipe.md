@@ -1,5 +1,7 @@
 # 04 · Functions, modules and the pipe operator
 
+> **Plain English:** A **module** is a labelled box of related functions (there are no classes). A **function** takes input and returns output and never changes anything outside itself. The **pipe** `|>` is an assembly line: the data moves from one step to the next, top to bottom, so code reads like a recipe.
+
 ## 1. Modules and named functions
 
 > **In short:** All named functions live inside a `defmodule`. `def` makes a public function, `defp` a private one.

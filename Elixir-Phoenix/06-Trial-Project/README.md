@@ -78,7 +78,7 @@ end
 
 Seed data in `priv/repo/seeds.exs`: one demo user, 2 boards, 15 tasks.
 
-**Learn:** [03-Phoenix/03](../03-Phoenix/03-ecto.md) changesets, queries and preload, and [03-Phoenix/04](../03-Phoenix/04-contexts-and-json-api.md) contexts.
+**Learn:** [03-Phoenix/03](../03-Phoenix/03-ecto.md) changesets, queries and preload, [03-Phoenix/04](../03-Phoenix/04-contexts-and-json-api.md) contexts, and [03-Phoenix/08](../03-Phoenix/08-ecto-advanced.md) for tags (many-to-many), search filters (`dynamic/2`) and `optimistic_lock` on tasks.
 **Checkpoint:** in IEx, create a board and tasks through the context, and confirm another user's scope can't fetch them. Commit.
 
 > **Multi-user boards (stretch goal):** add a `board_members` join table so several users can share a board, and change the scope checks from "owner" to "member". This is a great talking point about authorization.
@@ -172,7 +172,7 @@ Template idea (three columns):
 
 > `String.to_existing_atom` is safe here because `:todo`, `:doing` and `:done` already exist, and the context guard `when new_status in [...]` rejects anything else. Mention this in the interview.
 
-**Stretch:** drag and drop with a JS hook using SortableJS that calls `pushEvent("move", {id, to})`.
+**Stretch:** drag and drop with a JS hook using SortableJS that calls `pushEvent("move", {id, to})` ([03-Phoenix/07](../03-Phoenix/07-heex-assets-layouts-i18n.md) shows how to install npm packages). Add a board stats panel with `assign_async` and optimistic "toggle done" ([04-LiveView/04](../04-LiveView/04-liveview-advanced.md)).
 
 **Learn:** [04-LiveView/01](../04-LiveView/01-liveview-basics.md), [02](../04-LiveView/02-components-and-forms.md) and [03](../04-LiveView/03-streams-pubsub-uploads-hooks.md) on streams.
 **Checkpoint:** create and move tasks without page reloads. Commit.
@@ -233,6 +233,8 @@ Add it to the supervision tree, and be ready to explain why you chose ETS or a G
 - GitHub Actions CI ([05/03](../05-Testing-and-Production/03-releases-docker-deploy.md) §6).
 - Deploy to Fly.io with `release_command` migrations.
 - Add `/health`, LiveDashboard behind admin auth, and `credo` + `sobelow`.
+- Go through the [security checklist](../05-Testing-and-Production/05-security.md): scoped queries everywhere, authorization in every `handle_event`, rate-limited login, `force_ssl`, `check_origin`.
+- Optional: send emails via Oban ([03-Phoenix/09](../03-Phoenix/09-sessions-cookies-emails-uploads.md)) and add a signed board-invite link with `Phoenix.Token`.
 
 ## Step 11: README and demo script (1 h)
 

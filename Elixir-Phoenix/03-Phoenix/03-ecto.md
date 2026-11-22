@@ -1,5 +1,7 @@
 # 03 · Ecto: database, schemas, changesets, queries
 
+> **Plain English:** Ecto is how Elixir talks to the database. Think of a careful storekeeper. The **schema** is the label on each shelf, a **changeset** is the checklist form you fill in before anything is stored ("title present? not too long?"), the **Repo** is the only person allowed into the storeroom, and a **query** is a written request for what you want brought out.
+
 Ecto is **not** an ORM. There are no objects that save themselves (`user.save()`). It's made of four separate parts: **Repo** (talks to the DB), **Schema** (maps tables to structs), **Changeset** (validates and tracks changes) and **Query** (composable SQL DSL).
 
 ## 1. Repo: all DB access goes through it

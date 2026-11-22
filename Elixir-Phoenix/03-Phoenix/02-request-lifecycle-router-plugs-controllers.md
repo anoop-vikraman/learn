@@ -1,5 +1,7 @@
 # 02 · Request lifecycle: endpoint, router, plugs, controllers
 
+> **Plain English:** This lesson follows a request through Phoenix like a guest through a restaurant: the door (**Endpoint**), the host who checks the reservation (**Router**), the checks along the way (**Plugs**: is the guest logged in?), the waiter (**Controller**), and finally the dish is plated (**View/template**) and served. The request is carried in a struct called `conn` that every step receives and passes on.
+
 ## 1. The big picture
 
 > **In short:** Each request gets its own process. A `%Plug.Conn{}` struct flows through a pipeline of plugs (endpoint → router → pipeline → controller), and each plug takes a conn and returns a conn.

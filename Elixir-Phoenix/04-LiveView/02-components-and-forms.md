@@ -1,5 +1,7 @@
 # 02 · Components and forms
 
+> **Plain English:** Components are reusable pieces of UI, the same idea as React components. **Function components** just turn inputs into HTML. **Live components** also keep their own small state. Forms in LiveView use Ecto changesets, so the same validation rules check the form *as the user types* and again when it's saved.
+
 ## 1. Function components: stateless, like React function components
 
 > **In short:** A function that takes `assigns` and returns `~H`. Declare props with `attr` and children with `slot`, and call it as `<.name>`.

@@ -2,6 +2,10 @@
 
 You need to (1) learn the language, (2) build a trial project, and (3) pass an interview. This plan runs all three in parallel from week 2, so you aren't left with an untested project at the end.
 
+**Start here if you're completely new:**
+1. [The big picture, explained simply](01-the-big-picture-explained-simply.md): the whole stack explained with everyday analogies, no code. Read it first (20 minutes).
+2. [Glossary](02-glossary.md): every term in plain English. Keep it open while you study.
+
 ## 1. Install (day 1, 30 minutes)
 
 > **In short:** Install Erlang + Elixir with a version manager, then Postgres, then the Phoenix project generator.
@@ -33,12 +37,12 @@ mix phx.new --version       # Phoenix installer v1.8.x
 
 | Week | Learn | Build | Done when you can… |
 | --- | --- | --- | --- |
-| **1** | [01-Elixir-Basics](../01-Elixir-Basics/) 00 → 08 | Solve 10–15 small exercises (see below) in `iex` / a Mix project | Explain pattern matching and immutability; write a module with multi-clause functions and pipes; use `Enum.reduce`, `with`, and structs without looking things up |
-| **2** | [02-OTP-Concurrency](../02-OTP-Concurrency/) all + [03-Phoenix](../03-Phoenix/) 01 → 04 | [Trial project](../06-Trial-Project/) steps 1–4: generate app, schema + migrations, context, JSON API | Draw the supervision tree of a Phoenix app; write a GenServer from memory; explain conn → endpoint → router → pipeline → controller |
-| **3** | [03-Phoenix](../03-Phoenix/) 05 → 06 + [04-LiveView](../04-LiveView/) all | Trial project steps 5–8: auth, LiveView board, real-time updates with PubSub, presence | Explain the LiveView lifecycle (`mount` twice!), use streams, broadcast changes to all tabs |
-| **4** | [05-Testing-and-Production](../05-Testing-and-Production/) + [07-Interview-Prep](../07-Interview-Prep/) | Trial project steps 9–11: Oban job, tests, Docker/deploy, README | Answer every question in `07/01` out loud; demo the project in 5 minutes |
+| **1** | [Big picture](01-the-big-picture-explained-simply.md), then [01-Elixir-Basics](../01-Elixir-Basics/) 00 → 08 | Solve 10–15 small exercises (see below) in `iex` / a Mix project | Explain pattern matching and immutability; write a module with multi-clause functions and pipes; use `Enum.reduce`, `with`, and structs without looking things up |
+| **2** | [01](../01-Elixir-Basics/) 09–10, [02-OTP-Concurrency](../02-OTP-Concurrency/) 01 → 04, [03-Phoenix](../03-Phoenix/) 01 → 04 | [Trial project](../06-Trial-Project/) steps 1–4: generate app, schema + migrations, context, JSON API | Draw the supervision tree of a Phoenix app; write a GenServer from memory; explain conn → endpoint → router → pipeline → controller |
+| **3** | [03-Phoenix](../03-Phoenix/) 05 → 09, [04-LiveView](../04-LiveView/) 01 → 04 | Trial project steps 5–8: auth, LiveView board, real-time updates with PubSub, presence | Explain the LiveView lifecycle (`mount` twice!), use streams and async assigns, broadcast changes to all tabs |
+| **4** | [05-Testing-and-Production](../05-Testing-and-Production/) (incl. security), [02](../02-OTP-Concurrency/) 05–06, [03](../03-Phoenix/) 10, [01](../01-Elixir-Basics/) 11–12, [07-Interview-Prep](../07-Interview-Prep/) | Trial project steps 9–11: Oban job, tests, Docker/deploy, README | Answer every question in `07/01` out loud; demo the project in 5 minutes |
 
-**Short on time (2 weeks)?** Do: 01 (lessons 00–06), 02 (lessons 01–03), 03 (01–04), 04 (01–02), the trial project's core steps, and the interview file. Skip ETS, Presence, uploads and deployment details.
+**Short on time (2 weeks)?** Do: the big picture, 01 (lessons 00–06), 02 (lessons 01–03 + 06), 03 (01–04), 04 (01–02), the trial project's core steps, and the interview file. Skip macros, gen_statem/Broadway, advanced Ecto, GraphQL, uploads and deployment details.
 
 ## 3. Daily routine (2–3 hours)
 

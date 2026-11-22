@@ -1,5 +1,7 @@
 # 04 · Tasks, Agents, Registry, ETS and distribution
 
+> **Plain English:** These are the specialised helpers. A **Task** is a temp worker hired for one job (like `async/await`). An **Agent** is a simple box that holds a value. A **Registry** is a phone book for finding workers by name. **ETS** is a shared whiteboard that many workers can read at the same time, very fast.
+
 ## 1. Task: one-off concurrent work
 
 > **In short:** `Task.async` runs a function in a new process, and `Task.await` gets its result. It's Elixir's `Promise` + `await`.

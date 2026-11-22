@@ -1,5 +1,7 @@
 # 06 · Collections: recursion, Enum, comprehensions and Stream
 
+> **Plain English:** With no `for` loops that change counters, how do you go through a list? You use ready-made tools from `Enum` (map, filter, reduce), which work like array methods in JS, and occasionally **recursion** (a function calling itself on the rest of the list). `Stream` is the lazy version: it does the work only when you finally ask for results, which helps with huge or endless data.
+
 ## 1. Recursion: how "loops" work underneath
 
 > **In short:** With no mutable counters, you iterate by having a function call itself on the list's tail, with a clause for the empty list to stop.
